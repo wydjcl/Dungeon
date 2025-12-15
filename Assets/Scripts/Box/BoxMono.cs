@@ -5,12 +5,20 @@ using UnityEngine.EventSystems;
 
 public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public SpriteRenderer BoxSprite;
-    public BoxType BoxType;
-    public bool isLock;
-    public BoxDataSO boxData;
-    public Vector2 boxPos;
-    private bool isClick;
+    public SpriteRenderer BoxSprite;//砖块精灵
+    public BoxType BoxType;//砖块类型
+    public bool isLock;//是否是门锁
+    public BoxDataSO boxData;//砖块数据
+    public Vector2 boxPos;//砖块坐标
+    private bool isClick;//是否被点击
+
+    [Header("格子上的东西,例如道具敌人")]
+    public List<Prop> rewardList;//格子上的道具
+
+    public PropDataSO testProp;//测试用道ju
+
+    public bool haveProp;//TODO一个暂时的bool值,未来会被list的count代替
+    public bool haveMonster;
 
     [Header("寻路算法属性")]
     public bool disEntry;//能否点击,也包括是否是障碍物
@@ -40,7 +48,7 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void Init(BoxDataSO data)
     {
-        BoxSprite = data.BoxSprite;
+        BoxSprite.sprite = data.BoxSprite;
         BoxType = data.BoxType;
         isLock = data.isLock;
         //disEntry = data.disEntry;
@@ -48,6 +56,13 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         boxPos = transform.position;
         posX = Mathf.FloorToInt(boxPos.x);
         posY = Mathf.FloorToInt(boxPos.y);
+        rewardList = new List<Prop>();
+        //测试用
+        Prop newProp = new Prop();
+
+        newProp.data = testProp;
+        newProp.num = 77;
+        rewardList.Add(newProp);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -61,12 +76,70 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!isClick || disEntry || isLock)
+        if (!isClick || isLock)//正在被点击切是门锁就不能互动
         {
             return;
         }
+        if (disEntry && !haveMonster)//障碍物且不是敌人不能互动
+        {
+            return;
+        }
+        if (!(TimeManager.Instance.stage == Stage.PlayerTurn))
+        {
+            return;
+        }
+        if (BattleManager.Instance.battleMode)
+        {
+            //上下左右
+            if ((Mathf.Abs(posX - BattleManager.Instance.player.posX) + Mathf.Abs(posY - BattleManager.Instance.player.posY) > 1))
+            {
+                return;//除了上下左右以外屏蔽
+            }
+        }
 
         // AManager.Instance.OnTileClicked(this);
-        MoveManager.Instance.PlayerMove(this);
+        if (BattleManager.Instance.player.boxStart == this)//如果点自己
+        {
+            if (haveProp)
+            {
+                TimeManager.Instance.stage = Stage.PlayerTurnEnd;
+                TimeManager.Instance.stage = Stage.PlayerTurnBegin;//TODOend转化为begin
+                AddRewardsToBag();
+                BoxSprite.color = Color.white;
+                haveProp = false;
+            }
+        }
+        else
+        {
+            MoveManager.Instance.PlayerMove(this);
+        }
+    }
+
+    public void AddRewardsToBag()
+    {
+        foreach (Prop reward in rewardList)
+        {
+            // 查找背包里是否已有同名道具
+            Prop existing = BattleManager.Instance.player.bagLibrary.propList.Find(p => p.data.propName == reward.data.propName);
+
+            if (existing != null)
+            {
+                // 已存在 → 增加数量
+                existing.num += reward.num;
+            }
+            else
+            {
+                // 不存在 → 添加新项
+                Prop newProp = new Prop
+                {
+                    data = reward.data,
+                    num = reward.num
+                };
+                BattleManager.Instance.player.bagLibrary.propList.Add(newProp);
+            }
+        }
+
+        // 奖励列表清空（可选）
+        rewardList.Clear();
     }
 }

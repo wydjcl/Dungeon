@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class TimeManager : MonoBehaviour
     public float timeTest;//测试用的转换阶段的时间
     public Stage stage;
     public PlayerMono player;
+    public TextMeshProUGUI timeText;
 
     private void Awake()
     {
@@ -27,6 +29,8 @@ public class TimeManager : MonoBehaviour
     {
         if (stage == Stage.PlayerTurnBegin)
         {
+            time++;
+            timeText.text = time.ToString();
             stage = Stage.PlayerTurn;
             return;
         }
@@ -42,6 +46,15 @@ public class TimeManager : MonoBehaviour
         //}
         if (stage == Stage.PlayerTurn)
         {
+            if (player.path.Count != 0)
+            {
+                stage = Stage.PlayerTurnEnd;
+            }
+
+            return;
+        }
+        if (stage == Stage.PlayerTurnEnd)
+        {
             // Debug.Log("player.path.Count" + player.path.Count);
             if (player.path.Count != 0)
             {
@@ -55,6 +68,7 @@ public class TimeManager : MonoBehaviour
     private void init()
     {
         time = 0;
+        timeText.text = time.ToString();
         stage = Stage.PlayerTurn;
     }
 
@@ -66,6 +80,7 @@ public class TimeManager : MonoBehaviour
         if (stage == Stage.PlayerTurnBegin)
         {
             time++;
+            timeText.text = time.ToString();
             stage = Stage.PlayerTurn;
             return;
         }

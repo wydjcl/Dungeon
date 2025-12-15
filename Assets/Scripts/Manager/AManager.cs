@@ -22,6 +22,7 @@ public class AManager : MonoBehaviour
 
     public Transform gridParent;                // 生成地砖的父物体（可选）
 
+    public GameObject bat;
     public BoxMono st;
     public BoxMono et;
 
@@ -83,6 +84,28 @@ public class AManager : MonoBehaviour
                 {
                     tile.disEntry = true;
                     tile.BoxSprite.color = Color.red;
+                }
+                else
+                {
+                    if (Random.value < 0.1f)
+                    {
+                        tile.haveProp = true;
+                        tile.BoxSprite.color = Color.blue;
+                    }
+                    else
+                    {
+                        if (Random.value < 0.1f)
+                        {
+                            tile.haveMonster = true;
+                            tile.disEntry = true;
+                            // tile.BoxSprite.color = Color.yellow;
+                            var e = Instantiate(bat, gridParent);
+                            e.transform.position = tile.transform.position;
+                            var eb = e.GetComponent<EnemyBase>();
+                            eb.posX = Mathf.FloorToInt(e.transform.position.x);
+                            eb.posY = Mathf.FloorToInt(e.transform.position.y);
+                        }
+                    }
                 }
                 if (x == 0 & y == 0)
                 {
@@ -205,7 +228,7 @@ public class AManager : MonoBehaviour
         {
             debugPath += $"({node.posX},{node.posY}) -> ";
         }
-        Debug.Log(debugPath);
+        //Debug.Log(debugPath);
         return path;
     }
 }

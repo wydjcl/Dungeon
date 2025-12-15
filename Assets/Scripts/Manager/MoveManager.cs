@@ -13,7 +13,6 @@ public class MoveManager : MonoBehaviour
     public Vector2 playerPos;
     public bool isMoveMap;
     private bool dragging = false;          // 是否正在拖动
-    private List<BoxMono> path = new List<BoxMono>();
     public BoxMono boxStart;
 
     [Header("缩放参数")]
@@ -25,8 +24,6 @@ public class MoveManager : MonoBehaviour
 
     [Header("需要导入")]
     public CinemachineVirtualCamera vcam;
-
-    public PlayerMono player;
 
     private void Awake()
     {
@@ -57,21 +54,38 @@ public class MoveManager : MonoBehaviour
 
     public void PlayerMove(BoxMono box)
     {
-        player.path.Clear();
-        if (AManager.Instance.FindPath(player.boxStart, box) != null)
+        if (!(box.haveMonster))//没敌人就移动
         {
-            player.path = AManager.Instance.FindPath(player.boxStart, box);//思路是点击后将路径置入path,然后每次playerend阶段走一步
+            BattleManager.Instance.player.path.Clear();
+            if (AManager.Instance.FindPath(BattleManager.Instance.player.boxStart, box) != null)
+            {
+                BattleManager.Instance.player.path = AManager.Instance.FindPath(BattleManager.Instance.player.boxStart, box);//思路是点击后将路径置入path,然后每次playerend阶段走一步
+            }
+            TimeManager.Instance.stage = Stage.PlayerTurnEnd;
         }
-
-        // StartCoroutine(FollowNull(pos)); // 传参数
+        else
+        {
+            var x = Mathf.Abs(box.posX - BattleManager.Instance.player.posX);
+            var y = Mathf.Abs(box.posY - BattleManager.Instance.player.posY);
+            var area = BattleManager.Instance.player.attackArea;
+            if (Mathf.Sqrt(area * area * 2) >= Mathf.Sqrt(x * x + y * y))
+            {
+                //Debug.Log("攻击");
+                BattleManager.Instance.player.Attack(box);
+                // box.enemy.GetComponent<EnemyBase>().TakeDamage(10);
+                TimeManager.Instance.stage = Stage.PlayerTurnEnd;
+                Invoke("toBegin", 1f);
+            }
+            else
+            {
+                Debug.Log("不在攻击范围");
+            }
+        }
     }
 
-    private IEnumerator FollowNull(Vector2 pos)
+    private void toBegin()
     {
-        yield return new WaitForSeconds(1f); // 延迟 1 秒
-        GameManager.Instance.player.transform.position = pos;
-        yield return new WaitForSeconds(1f);
-        vcam.Follow = null;//TODO连续移动时候follow刚赋值就被置空了
+        TimeManager.Instance.stage = Stage.PlayerTurnBegin;
     }
 
     public void MoveMap()

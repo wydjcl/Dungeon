@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
     public GameObject MoveManager;
 
     public GameObject AManager;
-    public GameObject player;// ÔÝÓÃµÄ½ÇÉ«
 
     private void Awake()
     {

@@ -265,6 +265,11 @@ MonoBehaviour:
   isLock: 0
   boxData: {fileID: 11400000, guid: fcd377398f622b84da75a24ae8ce0856, type: 2}
   boxPos: {x: 0, y: 0}
+  rewardList: []
+  testProp: {fileID: 11400000, guid: eec00d680ef05854b91289e90cf5396c, type: 2}
+  enemy: {fileID: 0}
+  haveProp: 0
+  haveMonster: 0
   disEntry: 0
   posX: 0
   posY: 0
