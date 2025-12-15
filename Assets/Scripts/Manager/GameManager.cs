@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject AManager;
 
+    public GameObject BattleManager;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,5 +35,6 @@ public class GameManager : MonoBehaviour
     {
         //ÆôÓÃÆäËûmanager
         MoveManager.SetActive(true);
+        BattleManager.SetActive(true);
     }
 }

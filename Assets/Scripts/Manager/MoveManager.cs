@@ -54,6 +54,11 @@ public class MoveManager : MonoBehaviour
 
     public void PlayerMove(BoxMono box)
     {
+        if ((box.fogState == FogState.Unexplored))
+        {
+            Debug.Log("无法在黑暗中行走");
+            return;
+        }
         if (!(box.haveMonster))//没敌人就移动
         {
             BattleManager.Instance.player.path.Clear();

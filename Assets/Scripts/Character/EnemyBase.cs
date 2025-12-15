@@ -24,18 +24,39 @@ public class EnemyBase : MonoBehaviour
     {
         if (posX == pos.x && posY == pos.y)
         {
-            health -= 10;
-            UpTextManager.Instance.CreateUpText(this.transform.position, "-10");
-            sp.DOFade(0f, 0.2f)
-            .SetLoops(1, LoopType.Yoyo)
-            .OnComplete(() =>
+            if (health > 10)
             {
-                // 动画完成后执行 DOKill
-                sp.DOFade(1f, 0.1f).OnComplete(() =>
+                health -= 10;
+                UpTextManager.Instance.CreateUpText(this.transform.position, "-10");
+                sp.DOFade(0f, 0.2f)
+                .SetLoops(1, LoopType.Yoyo)
+                .OnComplete(() =>
                 {
-                    sp.DOKill();
+                    // 动画完成后执行 DOKill
+                    sp.DOFade(1f, 0.1f).OnComplete(() =>
+                    {
+                        sp.DOKill();
+                    });
                 });
-            });
+            }
+            else
+            {
+                Die();
+            }
         }
+    }
+
+    public void SetVisible(bool visible)
+    {
+        sp.enabled = visible; // 超出玩家视野就隐藏
+    }
+
+    public void Die()
+    {
+        Debug.Log("死了");
+        BattleManager.Instance.enemyList.Remove(this);
+        box.haveMonster = false;
+        box.disEntry = false;
+        Destroy(gameObject);
     }
 }

@@ -9,6 +9,7 @@ public class BattleManager : MonoBehaviour
     public bool battleMode;//战争迷雾外有敌人触发
     public GameObject playerObject;
     public PlayerMono player;
+    public List<EnemyBase> enemyList = new List<EnemyBase>();
 
     private void Awake()
     {
@@ -19,5 +20,12 @@ public class BattleManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        Init();
+    }
+
+    public void Init()
+    {
+        playerObject.SetActive(true);
+        GameManager.Instance.AManager.SetActive(true);
     }
 }

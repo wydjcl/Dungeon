@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -79,29 +80,37 @@ public class AManager : MonoBehaviour
                 tile.father = null;
                 tile.gCost = 0;
                 tile.hCost = 0;
+                tile.fogState = FogState.Unexplored;
+                tile.UpdateFogVisual();
 
                 if (Random.value < 0.2f)
                 {
                     tile.disEntry = true;
-                    tile.BoxSprite.color = Color.red;
+                    // tile.BoxSprite.color = Color.red;
+                    tile.BoxText.SetActive(true);
                 }
                 else
                 {
                     if (Random.value < 0.1f)
                     {
                         tile.haveProp = true;
-                        tile.BoxSprite.color = Color.blue;
+                        tile.BoxText.SetActive(true);
+                        tile.BoxText.GetComponent<TextMeshPro>().text = "S";
+                        // tile.BoxSprite.color = Color.blue;
                     }
                     else
                     {
-                        if (Random.value < 0.1f)
+                        if (Random.value < 0.1f)//生成敌人
                         {
                             tile.haveMonster = true;
                             tile.disEntry = true;
                             // tile.BoxSprite.color = Color.yellow;
                             var e = Instantiate(bat, gridParent);
+
                             e.transform.position = tile.transform.position;
                             var eb = e.GetComponent<EnemyBase>();
+                            eb.box = tile;
+                            BattleManager.Instance.enemyList.Add(eb);
                             eb.posX = Mathf.FloorToInt(e.transform.position.x);
                             eb.posY = Mathf.FloorToInt(e.transform.position.y);
                         }
@@ -116,6 +125,7 @@ public class AManager : MonoBehaviour
         }
 
         Debug.Log($"InitGrid 完成：生成 {gridWidth}x{gridHeight} 地砖，起点 {origin}。");
+        FogOfWarManager.Instance.UpdateFog(BattleManager.Instance.player, BattleManager.Instance.enemyList);//迷雾更新
     }
 
     private void ClearGrid()

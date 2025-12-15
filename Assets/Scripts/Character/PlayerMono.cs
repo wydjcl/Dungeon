@@ -21,6 +21,7 @@ public class PlayerMono : MonoBehaviour
     public int attackArea = 2;//使用曼哈顿距离
 
     public float attack = 10;
+    public int visionRadius = 3; // 玩家视野半径
 
     private void Start()
     {
@@ -30,7 +31,7 @@ public class PlayerMono : MonoBehaviour
             bagLibrary.propList.Add(item);
         }
 
-        BattleManager.Instance.playerObject = this.gameObject;
+        BattleManager.Instance.playerObject = gameObject;
         BattleManager.Instance.player = this;
     }
 
@@ -50,6 +51,7 @@ public class PlayerMono : MonoBehaviour
 
         transform.DOMove(path[0].transform.position, 1 / speed).OnComplete(() =>
         {
+            FogOfWarManager.Instance.UpdateFog(this, BattleManager.Instance.enemyList);//迷雾更新
             TimeManager.Instance.stage = Stage.PlayerTurnBegin;//不应该在这里转换阶段有敌人后
             haveMoved = false;
             MoveManager.Instance.vcam.Follow = null;//先相机回正,回正后移动,移动后follow置空

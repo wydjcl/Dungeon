@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public SpriteRenderer BoxSprite;//砖块精灵
+    public GameObject BoxText;//如果是障碍物就显示
     public BoxType BoxType;//砖块类型
     public bool isLock;//是否是门锁
     public BoxDataSO boxData;//砖块数据
@@ -26,6 +29,13 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int posX;
     public int posY;
     public BoxMono father;
+
+    [Header("战争迷雾")]
+    public FogState fogState = FogState.Unexplored;
+
+    public Color unexploredColor = Color.black;
+    public Color exploredColor = Color.gray;
+    public Color visibleColor = Color.white;
 
     // A* 算法需要的代价
     public float gCost;     // 从起点到当前节点的代价
@@ -105,6 +115,7 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 TimeManager.Instance.stage = Stage.PlayerTurnEnd;
                 TimeManager.Instance.stage = Stage.PlayerTurnBegin;//TODOend转化为begin
                 AddRewardsToBag();
+                BoxText.SetActive(false);
                 BoxSprite.color = Color.white;
                 haveProp = false;
             }
@@ -141,5 +152,24 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         // 奖励列表清空（可选）
         rewardList.Clear();
+    }
+
+    public void UpdateFogVisual()
+    {
+        switch (fogState)
+        {
+            case FogState.Unexplored:
+                BoxSprite.color = unexploredColor;
+                break;
+
+            case FogState.Explored:
+                BoxSprite.color = exploredColor;
+
+                break;
+
+            case FogState.Visible:
+                BoxSprite.color = visibleColor;
+                break;
+        }
     }
 }
