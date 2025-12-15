@@ -8,3 +8,12 @@ using UnityEngine;
 public enum BoxType
 {
 }
+
+public enum Stage
+{
+    PlayerTurnBegin,
+    PlayerTurn,
+    PlayerTurnEnd,
+    EnemyTurnBegin,
+    EnemyTurnEnd
+}

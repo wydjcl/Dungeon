@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BoxDataSO", menuName = "CreateDataSO/Box/BoxDataSO")]
 public class BoxDataSO : ScriptableObject
 {
-    public Sprite BoxSprite;
+    public SpriteRenderer BoxSprite;
     public BoxType BoxType;
 
     /// <summary>

@@ -5,13 +5,25 @@ using UnityEngine.EventSystems;
 
 public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public Sprite BoxSprite;
+    public SpriteRenderer BoxSprite;
     public BoxType BoxType;
-    public bool disEntry;
     public bool isLock;
     public BoxDataSO boxData;
     public Vector2 boxPos;
     private bool isClick;
+
+    [Header("寻路算法属性")]
+    public bool disEntry;//能否点击,也包括是否是障碍物
+
+    public int posX;
+    public int posY;
+    public BoxMono father;
+
+    // A* 算法需要的代价
+    public float gCost;     // 从起点到当前节点的代价
+
+    public float hCost;     // 从当前节点到终点的预估代价
+    public float fCost => gCost + hCost; // 总代价
 
     private void Start()
     {
@@ -31,9 +43,11 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         BoxSprite = data.BoxSprite;
         BoxType = data.BoxType;
         isLock = data.isLock;
-        disEntry = data.disEntry;
+        //disEntry = data.disEntry;
 
         boxPos = transform.position;
+        posX = Mathf.FloorToInt(boxPos.x);
+        posY = Mathf.FloorToInt(boxPos.y);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -47,10 +61,12 @@ public class BoxMono : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!isClick)
+        if (!isClick || disEntry || isLock)
         {
             return;
         }
-        MoveManager.Instance.PlayerMove(boxPos);
+
+        // AManager.Instance.OnTileClicked(this);
+        MoveManager.Instance.PlayerMove(this);
     }
 }

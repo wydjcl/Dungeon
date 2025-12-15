@@ -13,6 +13,8 @@ public class MoveManager : MonoBehaviour
     public Vector2 playerPos;
     public bool isMoveMap;
     private bool dragging = false;          // 是否正在拖动
+    private List<BoxMono> path = new List<BoxMono>();
+    public BoxMono boxStart;
 
     [Header("缩放参数")]
     public float zoomOutMin = 5f;   // 最小缩放
@@ -23,6 +25,8 @@ public class MoveManager : MonoBehaviour
 
     [Header("需要导入")]
     public CinemachineVirtualCamera vcam;
+
+    public PlayerMono player;
 
     private void Awake()
     {
@@ -51,11 +55,15 @@ public class MoveManager : MonoBehaviour
         cam = Camera.main;
     }
 
-    public void PlayerMove(Vector2 pos)
+    public void PlayerMove(BoxMono box)
     {
-        vcam.Follow = GameManager.Instance.player.transform;//先相机回正,回正后移动,移动后follow置空
+        player.path.Clear();
+        if (AManager.Instance.FindPath(player.boxStart, box) != null)
+        {
+            player.path = AManager.Instance.FindPath(player.boxStart, box);//思路是点击后将路径置入path,然后每次playerend阶段走一步
+        }
 
-        StartCoroutine(FollowNull(pos)); // 传参数
+        // StartCoroutine(FollowNull(pos)); // 传参数
     }
 
     private IEnumerator FollowNull(Vector2 pos)

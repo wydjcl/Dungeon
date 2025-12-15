@@ -260,8 +260,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f8a3d702425f9d438d7f0c690f88a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoxSprite: {fileID: 0}
+  BoxSprite: {fileID: 2801494616901969959}
   BoxType: 0
-  disEntry: 0
   isLock: 0
   boxData: {fileID: 11400000, guid: fcd377398f622b84da75a24ae8ce0856, type: 2}
+  boxPos: {x: 0, y: 0}
+  disEntry: 0
+  posX: 0
+  posY: 0
+  father: {fileID: 0}
+  gCost: 0
+  hCost: 0

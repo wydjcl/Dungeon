@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [Header("需要导入")]
     public GameObject MoveManager;
 
+    public GameObject AManager;
     public GameObject player;// 暂用的角色
 
     private void Awake()
