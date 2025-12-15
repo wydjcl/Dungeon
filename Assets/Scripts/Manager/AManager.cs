@@ -195,10 +195,17 @@ public class AManager : MonoBehaviour
         int x = node.posX;
         int y = node.posY;
 
+        // 上下左右
         if (x - 1 >= 0) neighbors.Add(grid[x - 1, y]);
         if (x + 1 < gridWidth) neighbors.Add(grid[x + 1, y]);
         if (y - 1 >= 0) neighbors.Add(grid[x, y - 1]);
         if (y + 1 < gridHeight) neighbors.Add(grid[x, y + 1]);
+
+        // 四个斜方向
+        if (x - 1 >= 0 && y - 1 >= 0) neighbors.Add(grid[x - 1, y - 1]);
+        if (x - 1 >= 0 && y + 1 < gridHeight) neighbors.Add(grid[x - 1, y + 1]);
+        if (x + 1 < gridWidth && y - 1 >= 0) neighbors.Add(grid[x + 1, y - 1]);
+        if (x + 1 < gridWidth && y + 1 < gridHeight) neighbors.Add(grid[x + 1, y + 1]);
 
         return neighbors;
     }
@@ -208,7 +215,9 @@ public class AManager : MonoBehaviour
     {
         int dx = Mathf.Abs(a.posX - b.posX);
         int dy = Mathf.Abs(a.posY - b.posY);
-        return dx + dy; // 曼哈顿距离（适合 4方向寻路）
+
+        // 对角距离（适合八方向）
+        return Mathf.Max(dx, dy);
     }
 
     // 回溯路径
